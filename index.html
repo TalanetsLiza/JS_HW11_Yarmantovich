@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="styles/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow&display=swap" rel="stylesheet">
+    <title>Contacts</title>
+</head>
+<body>
+    <div class="container">
+        <div class="order">
+            <div class="title">Create a contact</div>
+            <form class="form">
+                <input type="text" class="form__input" name="name" value="Ivan" placeholder="Name">
+                <input type="text" class="form__input" name="email" value="ivan@gmail.com" placeholder="Email">
+                <input type="text" class="form__input" name="address" value="Minsk, st. Lenin" placeholder="Address">
+                <input type="text" class="form__input" name="phone" value="375298888888" placeholder="Phone">
+                <button class="form__button" type="submit">Submit</button>
+            </form>
+        </div>
+        <div class="contacts">
+            <div class="contacts__title title">List of contact</div>
+            <div class="contacts__list"></div>
+        </div>
+    </div>
+
+    <template id="template-item">
+        <div class="contact">
+            <div class="contact__info">
+                <div class="contact__line">
+                    <div class="contact__name"></div>
+                    <div class="contact__phone"></div>
+                </div>
+                <div class="contact__line contact__line_small">
+                    <div class="contact__email"></div>
+                    <div class="contact__address"></div>   
+                </div>
+            </div>
+            <div class="contact__actions">
+                <button class="icon js-edit-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 96 960 960" width="24"><path d="M180 876h44l443-443-44-44-443 443v44Zm614-486L666 262l42-42q17-17 42-17t42 17l44 44q17 17 17 42t-17 42l-42 42Zm-42 42L248 936H120V808l504-504 128 128Zm-107-21-22-22 44 44-22-22Z"/></svg>
+                </button>
+                <button class="icon js-remove-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 96 960 960" width="24"><path d="M261 936q-24.75 0-42.375-17.625T201 876V306h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438V306ZM367 790h60V391h-60v399Zm166 0h60V391h-60v399ZM261 306v570-570Z"/></svg>
+                </button>
+            </div>
+        </div>
+        </div>
+    </template>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
