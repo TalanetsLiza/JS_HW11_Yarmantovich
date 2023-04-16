@@ -58,6 +58,7 @@ class ContactsApp extends Contacts {
     constructor() {
         super();
         this.addEventListeners();
+        this.readDateFromStorage();
     };
 
     addEventListeners() {
@@ -136,6 +137,8 @@ class ContactsApp extends Contacts {
         editButton.addEventListener("click", this.onEdit);
     
         console.log(this.data);
+        
+        this.saveDateToStorage();
 
         return newUser;
     };
@@ -146,6 +149,7 @@ class ContactsApp extends Contacts {
         document.querySelector(`.contact[data-id="${userId}"]`).remove();
 
         console.log(this.data);
+        this.saveDateToStorage();
     };
 
     edit(userId, userData) {
@@ -158,31 +162,50 @@ class ContactsApp extends Contacts {
         contactContainer.querySelector(".contact__email").innerText = newUserData.email;
         contactContainer.querySelector(".contact__address").innerText = newUserData.address;
 
-        console.log(this.data);        
-    }
+        console.log(this.data);
+        this.saveDateToStorage();        
+    };
+
+    saveDateToStorage() {
+        const allUserData = super.get();
+        if(!allUserData.length) {
+            localStorage.removeItem("contacts");
+            return;
+        }
+        localStorage.setItem("contacts", JSON.stringify(allUserData));
+
+        this.updateStorageExpiration();
+    };
+
+    readDateFromStorage() {
+        const dataNotExpired = document.cookie.includes("storageExpiration=true");
+
+        if (!dataNotExpired) {
+            localStorage.removeItem("contacts");
+            return;            
+        }
+
+        const stringifyData = localStorage.getItem("contacts");
+
+        if(!stringifyData) {
+            return
+        }
+
+        const data = JSON.parse(stringifyData);
+        data.forEach((userData) => {
+            this.add(userData);
+        });
+    };
+
+    updateStorageExpiration() {
+        // const maxAge = 10;
+        const maxAge = 60 * 60 * 24 * 10; // 10 days
+        document.cookie = `storageExpiration=true; path=/; max-age=${maxAge}`;
+
+        // const expires = new Date();
+        // expires.setDate(expires.getDate() + 10);
+        // document.cookie = `${name}=${value}; path=/; expires=${expires}`;
+    };
 }
 
 const constactsApp = new ContactsApp();
-
-constactsApp.add({
-    name: "Ivan",
-    email: "ivan@gmail.com",
-    address: "Minsk, st. Lenin",
-    phone: "375298888888"
-});
-const lizaUser = constactsApp.add({
-    name: "Liza",
-    email: "liza@gmail.com",
-    address: "Minsk, st. Lenina ",
-    phone: "375295555555"
-});
-
-setTimeout(() => {
-    constactsApp.edit(lizaUser.get().id, {
-        phone: "375296666666"
-    });
-}, 3000);
-
-setTimeout(() => {
-    constactsApp.remove(lizaUser.get().id);
-}, 5000);
