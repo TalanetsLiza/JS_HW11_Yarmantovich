@@ -58,7 +58,7 @@ class ContactsApp extends Contacts {
     constructor() {
         super();
         this.addEventListeners();
-        this.readDateFromStorage();
+        this.initData();
     };
 
     addEventListeners() {
@@ -177,26 +177,6 @@ class ContactsApp extends Contacts {
         this.updateStorageExpiration();
     };
 
-    readDateFromStorage() {
-        const dataNotExpired = document.cookie.includes("storageExpiration=true");
-
-        if (!dataNotExpired) {
-            localStorage.removeItem("contacts");
-            return;            
-        }
-
-        const stringifyData = localStorage.getItem("contacts");
-
-        if(!stringifyData) {
-            return
-        }
-
-        const data = JSON.parse(stringifyData);
-        data.forEach((userData) => {
-            this.add(userData);
-        });
-    };
-
     updateStorageExpiration() {
         // const maxAge = 10;
         const maxAge = 60 * 60 * 24 * 10; // 10 days
@@ -205,6 +185,46 @@ class ContactsApp extends Contacts {
         // const expires = new Date();
         // expires.setDate(expires.getDate() + 10);
         // document.cookie = `${name}=${value}; path=/; expires=${expires}`;
+    };
+
+    async initData() {
+        const data = await this.getData();
+
+        data.forEach((userData) => {
+            this.add(userData);
+        });
+    };
+
+    async getData() {
+        let data = this.getDataFromStorage();
+        if (!data) {
+            data = await this.getDataFromApi();
+        }
+        return data;
+    };
+
+    async getDataFromApi() {
+        const url = "https://jsonplaceholder.typicode.com/users";
+        const response = await fetch(url);
+        const data = await response.json();
+        const formattedData = data.map((item) => ({
+            ...item,
+            address: item.address.street,
+        }));
+        return formattedData;
+    };
+
+    getDataFromStorage() {
+        const dataNotExpired = document.cookie.includes("storageExpiration=true");
+        const stringifyData = localStorage.getItem("contacts");
+
+        if (!dataNotExpired || !stringifyData) {
+            localStorage.removeItem("contacts");
+            return null;
+        }
+
+        const data = JSON.parse(stringifyData);
+        return data;
     };
 }
 
